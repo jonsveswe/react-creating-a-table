@@ -62,7 +62,62 @@ const App = () => {
     setContacts(newContacts);
   };
 
-  const handleEditFormSubmit = (event) => {
+  /* const handleEditFormSubmit = (event) => {
+    event.preventDefault();
+
+    const editedContact = {
+      id: editContactId,
+      fullName: editFormData.fullName,
+      address: editFormData.address,
+      phoneNumber: editFormData.phoneNumber,
+      email: editFormData.email,
+    };
+
+    const newContacts = [...contacts];
+
+    const index = contacts.findIndex((contact) => contact.id === editContactId);
+
+    newContacts[index] = editedContact;
+
+    setContacts(newContacts);
+    setEditContactId(null);
+  }; */
+
+  const handleEditClick = (event, contact) => {
+    event.preventDefault();
+    setEditContactId(contact.id);
+
+    const formValues = {
+      fullName: contact.fullName,
+      address: contact.address,
+      phoneNumber: contact.phoneNumber,
+      email: contact.email,
+    };
+
+    setEditFormData(formValues);
+  };
+
+  const handleRowClick = (event, contact) => {
+    event.preventDefault();
+    console.log(event);
+    console.log(event.path);
+    setEditContactId(contact.id);
+
+    const formValues = {
+      fullName: contact.fullName,
+      address: contact.address,
+      phoneNumber: contact.phoneNumber,
+      email: contact.email,
+    };
+
+    setEditFormData(formValues);
+  };
+
+  const handleCancelClick = () => {
+    setEditContactId(null);
+  };
+
+  const handleSaveClick = (event) => {
     event.preventDefault();
 
     const editedContact = {
@@ -83,24 +138,6 @@ const App = () => {
     setEditContactId(null);
   };
 
-  const handleEditClick = (event, contact) => {
-    event.preventDefault();
-    setEditContactId(contact.id);
-
-    const formValues = {
-      fullName: contact.fullName,
-      address: contact.address,
-      phoneNumber: contact.phoneNumber,
-      email: contact.email,
-    };
-
-    setEditFormData(formValues);
-  };
-
-  const handleCancelClick = () => {
-    setEditContactId(null);
-  };
-
   const handleDeleteClick = (contactId) => {
     const newContacts = [...contacts];
 
@@ -111,9 +148,10 @@ const App = () => {
     setContacts(newContacts);
   };
 
+  //onSubmit={handleEditFormSubmit}
   return (
     <div className="app-container">
-      <form onSubmit={handleEditFormSubmit}>
+      <form >
         <table>
           <thead>
             <tr>
@@ -132,12 +170,14 @@ const App = () => {
                     editFormData={editFormData}
                     handleEditFormChange={handleEditFormChange}
                     handleCancelClick={handleCancelClick}
+                    handleSaveClick={handleSaveClick}
                   />
                 ) : (
                   <ReadOnlyRow
                     contact={contact}
                     handleEditClick={handleEditClick}
                     handleDeleteClick={handleDeleteClick}
+                    handleRowClick={handleRowClick}
                   />
                 )}
               </Fragment>
