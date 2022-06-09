@@ -1,54 +1,54 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { nanoid } from "nanoid";
 import "./App.css";
-import data from "./mock-data.json";
+//import data from "./mock-data.json";
 import ReadOnlyRow from "./components/ReadOnlyRow";
 import EditableRow from "./components/EditableRow";
 
 const App = () => {
-
-  useEffect(() => {
-    console.log("useEffect main app");
-    //add click listeners to ALL elements inside main
-/*     console.log(document.getElementById('form'));
-    const form = document.getElementById('form');
-    form.addEventListener('focusout', (event) => {
-      handleCancelClick();
-      console.log("hej");
-      event.target.style.background = 'pink';
-    }); */
-
-/*     document.querySelectorAll('main *').forEach((tag) => {
-        tag.addEventListener('click', onClickHandler);
-    }); */
+  const API_URL = 'http://localhost:5000/contacts';
 
 
-/*     return () => {
-      //Remove the listeners
-      const form = document.getElementById('form');
-      form.removeEventListener('focusout', (event) => {
-        handleCancelClick();
-      });
-    }; */
-
-  }, [])
-
-  const [contacts, setContacts] = useState(data);
+  const [contacts, setContacts] = useState([]);
   const [addFormData, setAddFormData] = useState({
     fullName: "",
     address: "",
     phoneNumber: "",
     email: "",
   });
-
   const [editFormData, setEditFormData] = useState({
     fullName: "",
     address: "",
     phoneNumber: "",
     email: "",
   });
-
   const [editContactId, setEditContactId] = useState(null);
+
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    console.log("useEffect main app");
+    const fetchContacts = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw Error('Did not receive expected data');
+        const data = await response.json();
+        setContacts(data);
+        setFetchError(null);
+      } catch (error) {
+        setFetchError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    //Simulate slow API
+    setTimeout(()=>{
+      fetchContacts();
+    }, 2000);
+    
+  }, [])
+
 
   const handleAddFormChange = (event) => {
     event.preventDefault();
@@ -179,7 +179,7 @@ const App = () => {
   //<form onSubmit={handleEditFormSubmit}>
   return (
     <div className="app-container">
-      <form >
+      {!isLoading && <form >
         <table>
           <thead>
             <tr>
@@ -212,8 +212,9 @@ const App = () => {
             ))}
           </tbody>
         </table>
-      </form>
-
+      </form>}
+      <div>{isLoading && <p>Loading table...</p>}</div>
+      <div>{fetchError && <p style={{color: "red"}}>{`Error: ${fetchError}`}</p>}</div>
       <h2>Add a Contact</h2>
       <form onSubmit={handleAddFormSubmit}>
         <input
