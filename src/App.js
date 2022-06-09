@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { nanoid } from "nanoid";
 import "./App.css";
 import data from "./mock-data.json";
@@ -6,6 +6,33 @@ import ReadOnlyRow from "./components/ReadOnlyRow";
 import EditableRow from "./components/EditableRow";
 
 const App = () => {
+
+  useEffect(() => {
+    console.log("useEffect main app");
+    //add click listeners to ALL elements inside main
+/*     console.log(document.getElementById('form'));
+    const form = document.getElementById('form');
+    form.addEventListener('focusout', (event) => {
+      handleCancelClick();
+      console.log("hej");
+      event.target.style.background = 'pink';
+    }); */
+
+/*     document.querySelectorAll('main *').forEach((tag) => {
+        tag.addEventListener('click', onClickHandler);
+    }); */
+
+
+/*     return () => {
+      //Remove the listeners
+      const form = document.getElementById('form');
+      form.removeEventListener('focusout', (event) => {
+        handleCancelClick();
+      });
+    }; */
+
+  }, [])
+
   const [contacts, setContacts] = useState(data);
   const [addFormData, setAddFormData] = useState({
     fullName: "",
@@ -99,8 +126,8 @@ const App = () => {
 
   const handleRowClick = (event, contact) => {
     event.preventDefault();
-    console.log(event);
-    console.log(event.path);
+    //console.log(event);
+    //console.log(event.path);
     setEditContactId(contact.id);
 
     const formValues = {
@@ -148,10 +175,10 @@ const App = () => {
     setContacts(newContacts);
   };
 
-  //onSubmit={handleEditFormSubmit}
+  //<form onSubmit={handleEditFormSubmit}>
   return (
     <div className="app-container">
-      <form >
+      <form id="form">
         <table>
           <thead>
             <tr>
