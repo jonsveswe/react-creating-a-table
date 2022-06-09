@@ -6,30 +6,30 @@ const EditableRow = ({
   handleCancelClick,
   handleSaveClick,
 }) => {
-  const node = useRef();
-  console.log(node);
-  function handleDocumentClick(event){
-    console.log("handle document click");
-
-    if (node.current && !node.current.contains(event.target)) {
-      handleCancelClick();
-    }
-
-/*     //inside click
-    if(node.current == null) { //node.current is null when you click one row after another. 
-      console.log(node.current);
-      return;
-    }
-    if (node.current.contains(event.target)) {
-      return;
-    }
-    // outside click
-    handleCancelClick(); */
-  } 
   useEffect(() => {
+      //When clicking outside element
+    function handleDocumentClick(event){
+      console.log("handle document click");
+
+  /*     if (node.current && !node.current.contains(event.target)) {
+        handleSaveClick(event);
+      } */
+
+      //inside click
+      if(!node.current) { //node.current is null when you click one row after another. 
+        //console.log(node.current);
+        handleSaveClick(event);
+        return;
+      }
+      if (node.current.contains(event.target)) { //Click on same row
+        return;
+      }
+      // outside click
+      handleSaveClick(event);
+    } 
     console.log("useEffect Row add listener");
     console.log(node);
-    document.addEventListener('click', handleDocumentClick);
+    document.addEventListener('click', handleDocumentClick); 
 
     return () => {
       console.log("useEffect Row remove listener");
@@ -37,8 +37,14 @@ const EditableRow = ({
       document.removeEventListener('click', handleDocumentClick);
     };
 
-  }, [])
+  }, [handleSaveClick]) // Had to move handleDocumentClick inside and add dependecy on handleSaveClick otherwise editFormData was old because i think doing addEventListener in useEffect will add a stale closure around the handleSaveClick. https://dmitripavlutin.com/react-hooks-stale-closures/
 
+  const node = useRef();
+  console.log(node);
+
+  function handleSaveClickLocal(event){
+    handleSaveClick(event);
+  }
 
   return (
     <tr ref={node}>
@@ -86,6 +92,7 @@ const EditableRow = ({
       <td>
         {/* <button type="submit">Save</button> */}
         <button type="button" onClick={handleSaveClick}>Save</button>
+        {/* <button type="button" onClick={handleSaveClickLocal}>Save</button> */}
         <button type="button" onClick={handleCancelClick}>
           Cancel
         </button>

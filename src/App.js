@@ -145,6 +145,7 @@ const App = () => {
   };
 
   const handleSaveClick = (event) => {
+    console.log('#########Inside handleSaveClick##########');
     event.preventDefault();
 
     const editedContact = {
@@ -178,7 +179,7 @@ const App = () => {
   //<form onSubmit={handleEditFormSubmit}>
   return (
     <div className="app-container">
-      <form id="form">
+      <form >
         <table>
           <thead>
             <tr>
