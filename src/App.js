@@ -4,6 +4,7 @@ import "./App.css";
 //import data from "./mock-data.json";
 import ReadOnlyRow from "./components/ReadOnlyRow";
 import EditableRow from "./components/EditableRow";
+import apiRequest from "./apiRequest";
 
 const App = () => {
   const API_URL = 'http://localhost:5000/contacts';
@@ -50,7 +51,7 @@ const App = () => {
   }, [])
 
 
-  const handleAddFormChange = (event) => {
+  const handleAddFormChange =  (event) => {
     event.preventDefault();
 
     const fieldName = event.target.getAttribute("name");
@@ -60,6 +61,7 @@ const App = () => {
     newFormData[fieldName] = fieldValue;
 
     setAddFormData(newFormData);
+
   };
 
   const handleEditFormChange = (event) => {
@@ -74,7 +76,7 @@ const App = () => {
     setEditFormData(newFormData);
   };
 
-  const handleAddFormSubmit = (event) => {
+  const handleAddFormSubmit = async (event) => {
     event.preventDefault();
 
     const newContact = {
@@ -87,6 +89,16 @@ const App = () => {
 
     const newContacts = [...contacts, newContact];
     setContacts(newContacts);
+
+    const postOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newContact)
+    }
+    const result = await apiRequest(API_URL, postOptions);
+    if(result) setFetchError(result);
   };
 
   /* const handleEditFormSubmit = (event) => {
@@ -144,7 +156,7 @@ const App = () => {
     setEditContactId(null);
   };
 
-  const handleSaveClick = (event) => {
+  const handleSaveClick = async (event) => {
     console.log('#########Inside handleSaveClick##########');
     event.preventDefault();
 
@@ -164,9 +176,21 @@ const App = () => {
 
     setContacts(newContacts);
     setEditContactId(null);
+
+    const updateOptions = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(editedContact)
+    };
+    const reqUrl = `${API_URL}/${editedContact.id}`;
+    const result = await apiRequest(reqUrl, updateOptions);
+    if(result) setFetchError(result);
+
   };
 
-  const handleDeleteClick = (contactId) => {
+  const handleDeleteClick = async (contactId) => {
     const newContacts = [...contacts];
 
     const index = contacts.findIndex((contact) => contact.id === contactId);
@@ -174,6 +198,12 @@ const App = () => {
     newContacts.splice(index, 1);
 
     setContacts(newContacts);
+
+    const deleteOptions = {method: 'DELETE'};
+    const reqUrl = `${API_URL}/${contactId}`
+    const result = await apiRequest(reqUrl, deleteOptions);
+    if(result) setFetchError(result);
+
   };
 
   //<form onSubmit={handleEditFormSubmit}>
